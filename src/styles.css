@@ -14,8 +14,7 @@
   border-collapse: collapse;
 }
 
-.table th,
-.table td {
+.table th, .table td {
   padding: 8px;
   border-bottom: 1px solid #ddd;
 }
@@ -34,7 +33,7 @@
 .btn {
   padding: 8px 16px;
   margin: 0 5px;
-  background-color: #4caf50;
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;
