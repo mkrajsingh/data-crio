@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import "./styles.css";
+import React, { useState, useEffect } from 'react';
+import './styles.css';
 
 function App() {
   const [employees, setEmployees] = useState([]);
@@ -12,22 +12,13 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
-      );
+      const response = await fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json');
       const data = await response.json();
       setEmployees(data);
     } catch (error) {
-      alert("Failed to fetch data");
+      alert('Failed to fetch data');
     }
   };
-
-  const indexOfLastEmployee = currentPage * employeesPerPage;
-  const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
-  const currentEmployees = employees.slice(
-    indexOfFirstEmployee,
-    indexOfLastEmployee
-  );
 
   const nextPage = () => {
     if (currentPage < Math.ceil(employees.length / employeesPerPage)) {
@@ -40,6 +31,10 @@ function App() {
       setCurrentPage(currentPage - 1);
     }
   };
+
+  const indexOfLastEmployee = currentPage * employeesPerPage;
+  const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
+  const currentEmployees = employees.slice(indexOfFirstEmployee, indexOfLastEmployee);
 
   return (
     <div className="container">
@@ -54,7 +49,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {currentEmployees.map((employee) => (
+          {currentEmployees.map(employee => (
             <tr key={employee.id}>
               <td>{employee.id}</td>
               <td>{employee.name}</td>
@@ -65,19 +60,9 @@ function App() {
         </tbody>
       </table>
       <div className="pagination">
-        <button className="btn" onClick={prevPage} disabled={currentPage === 1}>
-          Previous
-        </button>
+        <button className="btn" onClick={prevPage} disabled={currentPage === 1}>Previous</button>
         <span className="page-number">Page {currentPage}</span>
-        <button
-          className="btn"
-          onClick={nextPage}
-          disabled={
-            currentPage === Math.ceil(employees.length / employeesPerPage)
-          }
-        >
-          Next
-        </button>
+        <button className="btn" onClick={nextPage} disabled={currentPage === Math.ceil(employees.length / employeesPerPage)}>Next</button>
       </div>
     </div>
   );
