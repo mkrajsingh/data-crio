@@ -36,11 +36,6 @@ function App() {
   const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
   const currentEmployees = employees.slice(indexOfFirstEmployee, indexOfLastEmployee);
 
-  useEffect(() => {
-    // Scroll to the top of the page when changing pages
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentPage]);
-
   return (
     <div className="container">
       <h1 className="heading">Employee Data</h1>
