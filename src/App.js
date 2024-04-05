@@ -1,56 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import './styles.css';
+import { useEffect, useState } from "react";
+import styles from "./App.module.css";
 
 function App() {
-  const [employees, setEmployees] = useState([]);
+  const [data, setData] = useState([]);
+  const [totalPages, setTotalPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const employeesPerPage = 10;
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const getData = async () => {
     try {
-      const response = await fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json');
-      const data = await response.json();
-      setEmployees(data);
+      const res = await fetch(
+        "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
+      );
+      if (!res.ok) {
+        alert("failed to fetch data");
+      }
+      const data = await res.json();
+      setData(data);
+      const totalPages = Math.ceil(data.length / 10);
+      setTotalPages(totalPages);
+      setError(null);
     } catch (error) {
-      alert('Failed to fetch data');
+      console.error("Unable to fetch data: ", error);
+      setError(error.message);
     }
   };
 
-  const nextPage = () => {
-    if (currentPage < Math.ceil(employees.length / employeesPerPage)) {
+  const handleNext = () => {
+    if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
 
-  const prevPage = () => {
+  const handlePrev = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-  const indexOfLastEmployee = currentPage * employeesPerPage;
-  const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
-  const currentEmployees = employees.slice(indexOfFirstEmployee, indexOfLastEmployee);
+  const startIdx = (currentPage - 1) * 10;
+  const endIdx = startIdx + 10;
+  const currentData = data.slice(startIdx, endIdx);
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
-    <div className="container">
-      <h1 className="heading">Employee Data</h1>
-      <table className="table">
-        <thead>
+    <div className={styles.container}>
+      {error && <h1>{error}</h1>}
+      <div className={styles.heading}>
+        <h1>Employee Data Table</h1>
+      </div>
+      <table className={styles.table}>
+        <thead className={styles.tableHead}>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Email</td>
+            <td>Role</td>
           </tr>
         </thead>
-        <tbody>
-          {currentEmployees.map(employee => (
-            <tr key={employee.id}>
+        <tbody className={styles.tableBody}>
+          {currentData.map((employee, idx) => (
+            <tr key={idx}>
               <td>{employee.id}</td>
               <td>{employee.name}</td>
               <td>{employee.email}</td>
@@ -59,10 +72,10 @@ function App() {
           ))}
         </tbody>
       </table>
-      <div className="pagination">
-        <button className="btn" onClick={prevPage} disabled={currentPage === 1}>Previous</button>
-        <span className="page-number">Page {currentPage}</span>
-        <button className="btn" onClick={nextPage} disabled={currentPage === Math.ceil(employees.length / employeesPerPage)}>Next</button>
+      <div className={styles.btns}>
+        <button onClick={handlePrev}>Previous</button>
+        <button className={styles.pageNumber}>{currentPage}</button>
+        <button onClick={handleNext}>Next</button>
       </div>
     </div>
   );
